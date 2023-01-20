@@ -3,7 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-settings.py
+invoce/invoce/settings.py
 
 # C extensions
 *.so
