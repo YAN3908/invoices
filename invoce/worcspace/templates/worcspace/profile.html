@@ -1,0 +1,282 @@
+{% extends "worcspace/layout.html" %}
+
+{% block body %}
+
+{% if user.is_authenticated %}
+    {% if message %}
+        <div>{{ message }}</div>
+    {% endif %}
+
+<script>
+
+    $(document).ready(function(){
+        $( "#id_company_name" ).autocomplete({
+            source: function(request, response){
+                $.ajax({
+                    url: 'https://data.gov.lv/dati/lv/api/3/action/datastore_search',
+                    data:{ q: request.term,  resource_id: '25e80bf3-f107-4ab4-89ef-251b5b9374e9', limit: 10},
+                    dataType: "json",
+                    jsonpCallback: 'callback',
+                    success: function(data) {
+                        response($.map(data.result.records, function(v,i){
+                            var text = v.regcode + ' ' + v.name;
+                            return text;
+                        }));
+
+                    }
+                });
+            },
+            minLength: 3
+        });
+      });
+
+
+</script>
+
+<div class="bluline">
+            <form action="{% url 'new_company' %}" method="post">
+                {% csrf_token %}
+<div class="container">
+    <div class="row"  >
+        <div class="col-md-10">
+            <div class="form-group" style="margin-bottom: 3px;">
+                <input class="form-control" id="id_company_name" type="text" name="company" placeholder="regcode/company">
+            </div>
+        </div>
+        <div class="col-md-1">
+            <input type="submit" style="margin-top: 1px;" class="btn btn-primary" value="add">
+        </div>
+    </div>
+</div>
+
+
+            </form>
+
+</div>
+
+
+
+
+
+<h2>Your companies</h2>
+
+
+  {% if companies.all %}
+
+
+        <div id="invite" >
+                             {% if invitations.all %}
+            An invitation to become an accountant
+                     <div style="margin: 5px;  ">
+                        <form action="{% url 'accountant_agre' %}" method="post" >
+                            {% csrf_token %}
+                            {% for invitation in invitations%}
+                                <div style="background-color: powderblue; margin-top: 5px;">
+                                    <div>
+                                    {{invitation.company_name}}
+                                    </div>
+                                <div>
+                                        <label class="radio-inline">
+                                            <input type="radio"  name="{{invitation.id}}" value=True>yes
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input type="radio"  name="{{invitation.id}}" value=False>no
+                                        </label>
+                                </div>
+
+
+
+                                </div>
+                            {% endfor %}
+                            <input type="submit" value="submit">
+                        </form>
+                     </div>
+                     {% endif %}
+
+
+
+        </div>
+
+                                    <div id="headprofile"  class="container">
+                                        <div class="row" >
+                                          <div style="min-height: 20px; padding-bottom: 5px;" class="col-lg-2">Regcode</div>
+                                          <div style="min-height: 20px; padding-bottom: 5px;" class="col-lg-6">Company</div>
+
+                                          <div style="min-height: 20px; padding-bottom: 5px; word-break: break-all;" class="col-lg-2">Boss</div>
+                                          <div style="min-height: 20px; padding-bottom: 5px; word-break: break-all;" class="col-lg-2">Accountant</div>
+                                        </div>
+                                    </div>
+<div id="colhid" style=" float: left; width: 285px; border: 1px solid white;"></div>
+<div>
+                                    <div id="contentprofile" class="container">
+                                        {% for company in companies%}
+                                        <div id="scrol{{company.id}}" class="row blues" >
+                                          <div style="min-height: 20px; padding-bottom: 5px;" class="col-lg-2">{{company.pk}}</div>
+                                          <div style="min-height: 20px; padding-bottom: 5px;" class="col-lg-6">
+                                              <li class="nav-item dropdown" style="list-style-type: none;">
+                                                 <a  class="nav-link dropdown" data-bs-toggle="dropdown" href="{% url 'index' %}" role="button" aria-expanded="false">{{company.company_name}}</a>
+                                                 <ul class="dropdown-menu">
+                                                   <li><a class="dropdown-item" href="{% url 'sent_company_invoices' company.id %}">Sent</a></li>
+                                                   <li><a class="dropdown-item" href="{% url 'received_company_invoices' company.id %}">Received</a></li>
+                                                 </ul>
+                                              </li>
+                                          </div>
+
+                                          <div style="min-height: 20px; padding-bottom: 5px; word-break: break-all;" class="col-lg-2">{{company.boss}}</div>
+                                            {% if company.accountant %}
+                                                {% if company.boss == user%}
+                                          <div style="min-height: 20px; padding-bottom: 5px; word-break: break-all;" class="col-lg-2">
+                                              <li class="nav-item dropdown" style="list-style-type: none;">
+                                                 <a class="nav-link dropdown" data-bs-toggle="dropdown" href="{% url 'index' %}" role="button" aria-expanded="false">{{company.accountant}}</a>
+                                                 <ul class="dropdown-menu">
+                                                   <li><a class="dropdown-item" href="##">No action</a></li>
+                                                   <li>
+                                                       <form action="{% url 'del_accountant' %}" method="post">
+                                                           {% csrf_token %}
+                                                           <input type="hidden" name="company"  value="{{company.id}}">
+                                                           <input class="btn dropdown-item" type="submit"  value="delete">
+                                                       </form>
+                                                   </li>
+                                                 </ul>
+                                              </li>
+                                          </div>
+
+                                            {% else %}
+                                            <div style="min-height: 20px; padding-bottom: 5px; word-break: break-all;" class="col-lg-2">
+                                            {{company.accountant}}
+                                            </div>
+                                            {% endif %}
+                                             {% else %}
+                                             {% if company.invitation %}
+                                          <div style="min-height: 20px; padding-bottom: 5px; word-break: break-all;" class="col-lg-2">
+                                              <li class="nav-item dropdown" style="list-style-type: none;">
+                                                 <a class="nav-link dropdown" data-bs-toggle="dropdown" href="{% url 'index' %}" role="button" aria-expanded="false">invited {{company.invitation}}</a>
+                                                 <ul class="dropdown-menu">
+                                                   <li><a class="dropdown-item" href="##">No action</a></li>
+                                                   <li>
+                                                       <form action="{% url 'del_accountant' %}" method="post">
+                                                           {% csrf_token %}
+                                                           <input type="hidden" name="company"  value="{{company.id}}">
+                                                           <input class="btn dropdown-item" type="submit"  value="cancel">
+                                                       </form>
+                                                   </li>
+                                                 </ul>
+                                              </li>
+                                          </div>
+                                             {% else %}
+                                          <div style="min-height: 20px; padding-bottom: 5px; word-break: break-all;" class="col-lg-2">
+                                              <li class="nav-item dropdown" style="list-style-type: none;">
+                                                 <a class="nav-link dropdown" data-bs-toggle="dropdown" href="{% url 'index' %}" role="button" aria-expanded="false">add accountant</a>
+                                                 <ul class="dropdown-menu">
+                                                   <li><a class="dropdown-item" href="##">No action</a></li>
+                                                   <li>
+                                                       <form action="{% url 'profile' %}" method="post">
+                                                           {% csrf_token %}
+                                                          <input type="hidden" name="company"  value="{{company.id}}">
+                                                          <input type="text" style="width: 100px; margin-left: 5px" required name="phone" value="{{request.session.ph_ac}}" placeholder="Phone accountant" maxlength="10">
+                                                          <input type="submit" value="add">
+                                                       </form>
+                                                   </li>
+                                                 </ul>
+                                              </li>
+                                          </div>
+                                            {% endif %}
+                                            {% endif %}
+                                        </div>
+                                          {% endfor %}
+                                    </div>
+</div>
+
+<div  style=" width: 285px; border: 1px solid white;">.</div>
+
+  {% endif %}
+
+
+
+
+
+
+{% else %}
+
+<p>TODO</p>
+
+<p>{{some_text}}</p>
+
+TODO
+{% endif %}
+
+
+{% endblock %}
+
+                <form action="{% url 'add_accountant' %}" method="post" >
+        {% csrf_token %}
+        <div id="div_hidden" style="display: none; position: fixed;   bottom: 50%; right: 5%; ">
+        <input type="text" id="invitation_phone" required name="phone" placeholder="Phone accountant" maxlength="10">
+        <input class="checkbox" type="submit" value="add_accountant">
+        </div>
+
+            {% for company in companies%}
+      <tr>
+        <td>{{company.regcode}}</td>
+           <td>
+
+               <li class="nav-item dropdown" style="list-style-type: none;">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="{% url 'index' %}" role="button" aria-expanded="false">{{company.company_name}}</a>
+                <ul class="dropdown-menu">
+
+                    <li><a class="dropdown-item" href="{% url 'sent_company_invoices' company.id %}">Sent</a></li>
+                    <li><a class="dropdown-item" href="{% url 'received_company_invoices' company.id %}">Received</a></li>
+
+                </ul>
+               </li>
+
+        {%if user == company.boss%}
+        <td>Boss</td>
+        {% else %}
+        <td>Accountant</td>
+        {% endif %}
+        <td>{{company.boss}}</td>
+          {% if company.accountant %}
+            <td>{{company.accountant}}</td>
+          {% else %}
+          {% if company.invitation %}
+            <td>invited {{company.invitation}}</td>
+          {% else %}
+          <td><label>add accountant<input type="checkbox" name="boxes" onchange="fun1()" value="{{company.id}}"></label></td>
+          {% endif %}
+
+          {% endif %}
+      </tr>
+{% endfor %}
+</table>
+
+    </form>
+
+
+<script>
+function fun1(source) {
+var chbox;
+var checkboxes;
+const inp = document.createElement('input');
+inp.type='text';
+inp.name='phone';
+inp.length="10"
+inp.required
+checkboxes=document.getElementsByName('boxes');
+for(var i=0, n=checkboxes.length;i<n;i++) {
+    if (checkboxes[i].checked){
+        chbox = "true"
+    }
+
+  }
+	if (chbox === "true") {
+document.getElementById('div_hidden').style.display = "block";
+
+	}
+	else{
+	document.getElementById('div_hidden').style.display = "none";
+	}
+
+}
+
+</script>

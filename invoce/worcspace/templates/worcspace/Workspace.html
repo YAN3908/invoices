@@ -1,0 +1,13 @@
+{% extends "worcspace/layout.html" %}
+
+{% block body %}
+    <h2>Workspace</h2>
+
+    TODO
+
+            <form action="{% url 'index' %}" method="post">
+                {% csrf_token %}
+                {{form}}
+            <input type="submit" value="inputs data">
+            </form>
+{% endblock %}

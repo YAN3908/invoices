@@ -1,0 +1,77 @@
+<head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" rel="stylesheet"/>
+
+
+
+</head>
+	<body>
+
+<script>
+	function setDatePicker(type, datePickerID) {
+
+
+			var monthModeOptions = {
+				 format: "mm/yyyy",
+				 autoclose: true,
+				 orientation: 'bottom',
+				 startView: "months",
+				 minViewMode: "months"
+			};
+			var yearModeOptions = {
+				 format: "yyyy",
+				 autoclose: true,
+				 orientation: 'bottom',
+				 startView: "years",
+				 minViewMode: "years"
+			};
+
+			// Destroy & re-initalize with specified Mode Options for ID-specified control
+			$(datePickerID).datepicker("destroy");
+
+				$(datePickerID).datepicker(monthModeOptions);
+
+}
+
+$(document).ready(function() {
+
+      // Initialize with initial Mode Options
+			$('#combined').datepicker({
+				 format: "mm/dd/yyyy",
+				 autoclose: true,
+				 orientation: 'bottom',
+				 startView: "days",
+				 minViewMode: "days"
+			}).on('change', function (ev) {
+				$(this).datepicker('hide');
+			});
+
+      // Handle radio buttons
+			$('input[name=mode]').change(function(){
+				// Hide any current DatePicker and erase text box value
+				$('#combined').datepicker('hide');
+				$('#combined').val('');
+
+				var value = $( 'input[name=mode]:checked' ).val();
+				if (value == 'day') {
+					setDatePicker('day', '#combined');
+				} else if (value == 'month') {
+					setDatePicker('month', '#combined');
+				} else {
+					setDatePicker('year', '#combined');
+				}
+			});
+ });
+</script>
+
+	<div class="">
+   <input type="radio" id="dayMode" name="mode" value="day" checked> <label for="dayMode">Day</label>
+   <input type="radio" id="monthMode" name="mode" value="month"> <label for="monthMode">Month</label>
+   <input type="radio" id="yearMode" name="mode" value="year"> <label for="yearMode">Year</label>
+</div>
+
+COMBINED Picker: <input id="combined" placeholder="Depends on radiobutton" style="width:250px"> <br/>
+<input type="submit" value="Search">
+	</body>
+</html>

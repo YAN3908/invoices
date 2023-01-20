@@ -1,0 +1,23 @@
+{% extends "worcspace/layout.html" %}
+
+{% block body %}
+    <h2>Workspace</h2>
+{% if user.is_authenticated %}
+{% for invoice in invoices%}
+
+    {{invoice.description}}
+    <a href="{{invoice.file_obj.url}}">File</a>
+    {{invoice.user_inv}}
+    {{invoice.user_sent_inv}}
+    {{invoice.time_send}}
+{% endfor %}
+
+{% else %}
+
+<p>TODO</p>
+
+<p>{{some_text}}</p>
+
+TODO
+{% endif %}
+{% endblock %}

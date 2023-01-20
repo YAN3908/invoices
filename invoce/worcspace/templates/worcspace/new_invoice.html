@@ -1,0 +1,18 @@
+{% extends "worcspace/layout.html" %}
+
+{% block body %}
+    <h2>Workspace</h2>
+
+    {% if message %}
+        <div>{{ message }}</div>
+    {% endif %}
+
+            <form action="{% url 'new_invoice' company.id  %}" method="post" enctype= "multipart/form-data">
+                {% csrf_token %}
+                <div class="input-group">
+                {{form}}
+                    </div>
+            <input type="submit" value="inputs data">
+            </form>
+
+{% endblock %}

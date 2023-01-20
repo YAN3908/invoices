@@ -1,0 +1,142 @@
+{% extends "worcspace/layout.html" %}
+{% load static %}
+{% block body %}
+
+  {% if user.is_authenticated %}
+    <div class="container" style="max-width: 1500px;">
+      <div class="row" >
+        <div style="text-align: left; padding-left: 30px;" class="col-lg-6">
+          <h2>Received invoices</h2></div>
+        <div style="text-align: right;" class="col-lg-6">
+          <form style="display: inline-block;" action="{% url 'received_inv' %}">
+            <select  id="month" name="mons" style=" height: 29px">
+              {% if request.GET.mons == "0"%}
+                <option value="0" selected>---</option>
+                {% else %}
+                <option value="0">---</option>
+              {% endif %}
+              {% if request.GET.mons == "1"%}
+                <option value="1" selected>Jan</option>
+                {% else %}
+                <option value="1">Jan</option>
+                {% endif %}
+              {% if request.GET.mons == "2"%}
+                <option value="2" selected>Feb</option>
+                {% else %}
+                <option value="2">Feb</option>
+              {% endif %}
+              {% if request.GET.mons == "3"%}
+                <option value="3" selected>Mar</option>
+                {% else %}
+                <option value="3">Mar</option>
+              {% endif %}
+              {% if request.GET.mons == "4"%}
+                <option value="4" selected>Apr</option>
+                {% else %}
+                <option value="4">Apr</option>
+              {% endif %}
+              {% if request.GET.mons == "5"%}
+                <option value="5" selected>May</option>
+                {% else %}
+                <option value="5">May</option>
+              {% endif %}
+              {% if request.GET.mons == "6"%}
+                <option value="6" selected>June</option>
+                {% else %}
+                <option value="6">June</option>
+              {% endif %}
+              {% if request.GET.mons == "7"%}
+                <option value="7" selected>July</option>
+                {% else %}
+                <option value="7">July</option>
+              {% endif %}
+              {% if request.GET.mons == "8"%}
+                <option value="8" selected>Aug</option>
+                {% else %}
+                <option value="8">Aug</option>
+              {% endif %}
+              {% if request.GET.mons == "9"%}
+                <option value="9" selected>Sep</option>
+                {% else %}
+                <option value="9">Sep</option>
+              {% endif %}
+              {% if request.GET.mons == "10"%}
+                <option value="10" selected>Oct</option>
+                {% else %}
+                <option value="10">Oct</option>
+              {% endif %}
+              {% if request.GET.mons == "11"%}
+                <option value="11" selected>Nov</option>
+                {% else %}
+                <option value="11">Nov</option>
+              {% endif %}
+              {% if request.GET.mons == "12"%}
+                <option value="12" selected>Dec</option>
+                {% else %}
+                <option value="12">Dec</option>
+              {% endif %}
+            </select>
+            <input  type="number" id="year" name="year" value="{{request.GET.year}}"  placeholder="year" min="2022" max="3000">
+            <input type="text" value="{{request.GET.company}}" placeholder="Company" name="company">
+            <input  class="btn btn-primary" type="submit" value="Search">
+          </form>
+          {% if request.GET.year or request.GET.company %}
+            <a style="display: inline-block;" href="{% url 'received_inv' %}"><button class="btn btn-primary">scip</button></a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div id="head" class="container" style="max-width: 1500px;">
+      <div class="row" >
+        <div style="min-height: 20px; padding-bottom: 5px;" class="col-lg-1">date</div>
+        <div style="min-height: 20px; padding-bottom: 5px;" class="col-lg-2">company</div>
+        <div style="min-height: 20px; padding-bottom: 5px;" class="col-lg-1"></div>
+        <div style="min-height: 20px; padding-bottom: 5px;" class="col-lg-2">for the company</div>
+        <div style="min-height: 20px; padding-bottom: 5px; word-break: break-all;" class="col-lg-2">file</div>
+        <div style="min-height: 20px; padding-bottom: 5px;" class="col-lg-3">description</div>
+        <div style="min-height: 20px;" class="col-lg-1"></div>
+      </div>
+    </div>
+    <div class="container" style="max-width: 1500px;">
+      <form action="{% url 'sent_inv' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="path" value="?mons={{request.GET.mons}}&year={{request.GET.year}}&company={{request.GET.company}}">
+        {% for invoice in invoices%}
+        <div class="row blues" >
+          <div style="min-height: 20px; padding-bottom: 5px;" class="col-lg-1">{{invoice.time_send | date:"SHORT_DATE_FORMAT"}}</div>
+          <div style="min-height: 20px; padding-bottom: 5px;" class="col-lg-2">{{invoice.company_invoice.company_name}} </div>
+          <div style="min-height: 20px; padding-bottom: 5px;" class="col-lg-1"><img style="height: 25px; object-fit: contain;" id="arrow" src= "{% static 'worcspace/css/image/arrow.png' %}"></div>
+          <div style="min-height: 20px; padding-bottom: 5px;" class="col-lg-2">{{invoice.for_the_company.company_name}}</div>
+          <div style="min-height: 20px; padding-bottom: 5px; word-break: break-all;" class="col-lg-2"><a href="{{invoice.file_obj.url}}">{{invoice.file_obj | cut:'media/'}}</a></div>
+          <div style="min-height: 20px; padding-bottom: 5px;" class="col-lg-3">{{invoice.description}}</div>
+          <div style="min-height: 20px;" class="col-lg-1">
+          {% if invoice.paid %}
+            <div style="display: inline-block; margin: 10px 10px 10px 0px;">
+                   <img style="height: 29px; object-fit: contain; " class="card-img-top" src= "{% static 'worcspace/css/image/mark.png' %}">
+            </div>
+            {% else %}
+            {% if invoice.remainder %}
+              <div style="display: inline-block; margin: 10px 0px 10px 0px;">
+                    <img style="height: 29px; object-fit: contain; " class="card-img-top" src= "{% static 'worcspace/css/image/remainder.png' %}">
+              </div>
+              {% else %}
+              <div style="display: inline-block; margin: 10px 0px 10px 0px;">
+                    <img style="height: 29px; object-fit: contain; " class="card-img-top" src= "{% static 'worcspace/css/image/paid.png' %}">
+              </div>
+              {% endif %}
+            {% endif %}
+
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+            </form>
+    </div>
+      {% else %}
+      <p>TODO</p>
+      <p>{{some_text}}</p>
+      TODO
+    {% endif %}
+{% endblock %}
