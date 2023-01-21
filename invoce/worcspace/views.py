@@ -23,7 +23,7 @@ import json
 import urllib
 from urllib.request import urlopen
 from urllib.error import HTTPError, URLError
-
+from .sending_to_the_client import message_registration
 
 class InvoiceForm(ModelForm):
     class Meta:
@@ -161,6 +161,7 @@ def register(request):
                 "message": "Username already taken."
             })
         login(request, user)
+        message_registration(email)
         # print(user.id)
         # company = Company(company_name=company_name, boss=user)
         # company.save()
