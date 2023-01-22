@@ -151,7 +151,7 @@ def register(request):
             return render(request, "worcspace/register.html", {
                 "message": "Passwords must match."
             })
-
+        print(message_registration(email))
         # Attempt to create new user
         try:
             user = User.objects.create_user(username, email, password, phone=phone)
@@ -161,7 +161,7 @@ def register(request):
                 "message": "Username already taken."
             })
         login(request, user)
-        message_registration(email)
+
         # print(user.id)
         # company = Company(company_name=company_name, boss=user)
         # company.save()
