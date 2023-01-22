@@ -7,21 +7,21 @@ from django_bulk_update.manager import BulkUpdateManager
 
 class User(AbstractUser):
     phone = models.CharField(max_length=10)
-    blocked = models.BooleanField(default=True)
+    access_allowed = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
-        if self.blocked:
+        if self.access_allowed:
             companies = Company.objects.filter(boss=self.pk)
             for company in companies:
-                company.blocked = True
-            Company.objects.bulk_update(companies, update_fields=['blocked'])
+                company.access_allowed = True
+            Company.objects.bulk_update(companies, update_fields=['access_allowed'])
         else:
             # Company.objects.bulk_update(companies)
-            if not self.blocked:
+            if not self.access_allowed:
                 companies = Company.objects.filter(boss=self.pk)
                 for company in companies:
-                    company.blocked = False
-                Company.objects.bulk_update(companies, update_fields=['blocked'])
+                    company.access_allowed = False
+                Company.objects.bulk_update(companies, update_fields=['access_allowed'])
         super().save(*args, **kwargs)
 
 
@@ -32,7 +32,7 @@ class Company(models.Model):
     accountant = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL, related_name="accountant")
     invitation = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL, related_name="invitation")
     email = models.EmailField(blank=True, null=True)
-    blocked = models.BooleanField(default=True)
+    access_allowed = models.BooleanField(default=True)
     objects = BulkUpdateManager()
 
 class Invoice(models.Model):

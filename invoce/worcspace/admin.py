@@ -36,18 +36,18 @@ class MyAdminSite(AdminSite):
 #     list_display = ('username', 'phone')
 class CompanyInline(admin.TabularInline):   # StackedInline
     model = Company
-    fields = ('company_name', 'blocked')
+    fields = ('company_name', 'access_allowed')
     fk_name = 'boss'
     extra = 0
     readonly_fields = ('company_name',)
 
 
 class Fields(admin.ModelAdmin):
-    fields = ('username', 'first_name', 'last_name', 'phone', 'email', 'blocked', 'is_active')
-    list_display = ('username', 'phone', 'email', 'blocked')
+    fields = ('username', 'first_name', 'last_name', 'phone', 'email', 'access_allowed', 'is_active')
+    list_display = ('username', 'phone', 'email', 'access_allowed')
     inlines = [CompanyInline]
     save_on_top = True
-    list_editable = ('blocked',)
+    list_editable = ('access_allowed',)
     search_fields = ('username',)
     # def formfield_for_foreignkey(self, db_field, request, **kwargs):
     #     if db_field.name == "company":
@@ -55,7 +55,7 @@ class Fields(admin.ModelAdmin):
     #     return super(Fields, self).formfield_for_foreignkey(db_field, request, **kwargs)
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
-    list_display =('regcode', 'company_name', 'boss', 'blocked')
+    list_display =('regcode', 'company_name', 'boss', 'access_allowed')
 
 
 
