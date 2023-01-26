@@ -13,11 +13,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 import os
 
-
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -40,13 +37,21 @@ LOGOUT_REDIRECT_URL = '/'
 # FROM_EMAIL = 'ubelitis390871@gmail.com' # replace with your address
 # SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
 
-EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_HOST_USER = 'apikey'
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST_USER = os.getenv("EXCHANGE_OF_INVOICES_EMAIL")
 EMAIL_HOST_PASSWORD = os.getenv("SENDGRID_API_KEY")
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+
+
+# EMAIL_HOST = 'smtp.sendgrid.net'
+# EMAIL_HOST_USER = 'apikey'
+# EMAIL_HOST_PASSWORD = os.getenv("SENDGRID_API_KEY")
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# DEFAULT_FROM_EMAIL =  os.getenv("EXCHANGE_OF_INVOICES_EMAIL") # this is the sendgrid email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-DEFAULT_FROM_EMAIL =  os.getenv("EXCHANGE_OF_INVOICES_EMAIL") #'ubelitis390871@gmail.com' # this is the sendgrid email
+
 
 # Application definition
 
@@ -91,7 +96,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'invoce.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
@@ -101,7 +105,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -121,7 +124,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -134,7 +136,6 @@ TIME_ZONE = 'Europe/Riga'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
