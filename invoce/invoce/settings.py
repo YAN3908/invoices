@@ -31,7 +31,22 @@ SECRET_KEY = os.getenv("SECRET_DJANGO")
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+AUTH_USER_MODEL = 'users.User'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'sgbackend.SendGridBackend'
+# SENDGRID_SANDBOX_MODE_IN_DEBUG = False
+# FROM_EMAIL = 'ubelitis390871@gmail.com' # replace with your address
+# SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
 
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_HOST_USER = 'apikey'
+EMAIL_HOST_PASSWORD = os.getenv("SENDGRID_API_KEY")
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+DEFAULT_FROM_EMAIL =  os.getenv("EXCHANGE_OF_INVOICES_EMAIL") #'ubelitis390871@gmail.com' # this is the sendgrid email
 
 # Application definition
 
@@ -61,7 +76,7 @@ ROOT_URLCONF = 'invoce.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'worcspace/templates/worcspace'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

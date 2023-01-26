@@ -2,12 +2,23 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from datetime import datetime
 from django_bulk_update.manager import BulkUpdateManager
+from django.core.validators import RegexValidator
+from django.utils.translation import gettext_lazy as _
+
+
 # Create your models here.
 
 
 class User(AbstractUser):
-    phone = models.CharField(max_length=10)
+    # email = models.EmailField(_("email address"), unique=True)
+    phone = models.CharField(max_length=10, validators=[RegexValidator(
+        regex=r'\d{10}',
+        message='only digits please',
+        code='invalid',
+        inverse_match=False
+    )])
     access_allowed = models.BooleanField(default=False)
+    email_verify = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if self.access_allowed:
@@ -35,6 +46,7 @@ class Company(models.Model):
     access_allowed = models.BooleanField(default=True)
     objects = BulkUpdateManager()
 
+
 class Invoice(models.Model):
     file_obj = models.FileField(upload_to='media/')
     description = models.CharField(max_length=256)
@@ -43,6 +55,7 @@ class Invoice(models.Model):
     time_send = models.DateTimeField(default=datetime.now)
     paid = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL, related_name="paid")
     remainder = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL, related_name="remainder")
+    mail_sent = models.BooleanField(null=True, default=None)
 
     def __str__(self):
         return f"{self.company_invoice} -> {self.for_the_company}"

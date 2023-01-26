@@ -43,8 +43,8 @@ class CompanyInline(admin.TabularInline):   # StackedInline
 
 
 class Fields(admin.ModelAdmin):
-    fields = ('username', 'first_name', 'last_name', 'phone', 'email', 'access_allowed', 'is_active')
-    list_display = ('username', 'phone', 'email', 'access_allowed')
+    fields = ('username', 'first_name', 'last_name', 'phone', 'email', 'access_allowed', 'is_active','email_verify')
+    list_display = ('username', 'phone', 'email', 'email_verify', 'access_allowed')
     inlines = [CompanyInline]
     save_on_top = True
     list_editable = ('access_allowed',)
@@ -55,7 +55,7 @@ class Fields(admin.ModelAdmin):
     #     return super(Fields, self).formfield_for_foreignkey(db_field, request, **kwargs)
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
-    list_display =('regcode', 'company_name', 'boss', 'access_allowed')
+    list_display =('regcode', 'company_name', 'boss', 'access_allowed',)
 
 
 
