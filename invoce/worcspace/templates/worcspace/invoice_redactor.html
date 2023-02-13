@@ -1,0 +1,121 @@
+{% extends "worcspace/layout.html" %}
+{% load static %}
+{% block body %}
+
+    <h2>Invoice for {{invoice.for_the_company.company_name}}</h2>
+{% if user.is_authenticated %}
+      <div class="container" style="max-width: 1700px;">
+        <div class="row" >
+          <div class="col-lg-6" >
+              <div style="text-align: left; margin-top: 20px">
+                  {{invoice.time_send}}
+              </div>
+
+              {%if invoice.paid%}
+                <div style="margin: 10px; background-color: green; ">
+                    <b style="color: white">PAID</b>
+                </div>
+              {%else%}
+                {%if invoice.remainder%}
+                 <div style=" margin: 10px; background-color: red; ">
+                               <b> REMAINDER </b>
+                 </div>
+                {%else%}
+                  <div style="margin: 10px; background-color: #ccf0ff; ">
+                               <b> NOT PAID </b>
+                  </div>
+                              {%endif%}
+                            {%endif%}
+
+                  <form action="{% url 'invoice_redactor' invoice.id %}" method="post" enctype= "multipart/form-data">
+                    {% csrf_token %}
+
+                          {% for error in form.non_field_errors %}
+
+
+                    <p style="color: red;">{{error}}</p>
+{% endfor %}
+                      <div style="display: none">{{form.for_the_company}}</div>
+
+                    {{form.description.label}}
+                    <div class="form-group">{{form.description}}</div>
+
+
+                    <div class="form-group" style="padding-top: 10px">{{form.file_obj}}</div>
+                    {%if invoice.mail_sent is undefined%}
+                      <img style="height: 29px; object-fit: contain; " class="card-img-top" src= "{% static 'worcspace/css/image/mail_send.gif' %}">
+                      <div class="form-group">{{form.email}}</div>
+                       {%else%}
+                      {%if invoice.mail_sent%}
+                      {{form.email.label}}
+                    <div class="form-group">{{form.email}}</div>
+                    {%else%}
+                      <span style="color: red">Mail not sent, please click Update</span>
+                    <div class="form-group">{{form.email}}</div>
+                      {%endif%}
+                      {%endif%}
+                      <div class="form-group">
+                        <div class="row" >
+                          <div class="col">
+                            <input class="btn btn-primary" type="submit" value="Update">
+                          </div>
+                          <div class="col">
+                            {%if invoice.paid%}
+                              <input type="submit" class="btn btn-info" name="reset" value="Reset">
+                            {%else%}
+                              {%if invoice.remainder%}
+                                <input type="submit" class="btn btn-success" name="paid" value="Paid">
+                              {%else%}
+                                <input type="submit" class="btn btn-success" name="paid" value="Paid">
+                                <input type="submit" class="btn btn-warning" name="remainder" value="Remainder">
+                              {%endif%}
+                            {%endif%}
+                          </div>
+                          <div class="col">
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                              Delete
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                              <div class="modal-dialog">
+                                <div class="modal-content">
+                                  <div class="modal-body" style="color: red">
+                                    The invoice will be deleted without the possibility of recovery
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <input type="submit" class=" btn btn-danger" name="delete" value="Delete">
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+
+                </form>
+          </div>
+<!--             <div class="col-lg-6"><h2>Invoice for {{invoice.for_the_company.company_name}}</h2></div>-->
+          <div class="col-lg-6">
+              <div class="box">
+
+              <iframe src="{{invoice.file_obj.url}}"></iframe>
+              </div>
+          </div>
+<!--<div class="col-lg-6"><iframe src="{{invoice.file_obj.url}}" style="position: absolute; top: 0px; left: 0px; width: 100%; height: 1000px; border: none;"></iframe></div>-->
+        </div>
+      </div>
+
+
+
+{% else %}
+
+<p>TODO</p>
+
+<p>{{some_text}}</p>
+
+TODO
+{% endif %}
+{% endblock %}
