@@ -107,7 +107,7 @@
           <div style="min-height: 20px; padding-bottom: 5px;" class="col-lg-2">{{invoice.company_invoice.company_name}} </div>
           <div style="min-height: 20px; padding-bottom: 5px;" class="col-lg-1"><img style="height: 25px; object-fit: contain;" id="arrow" src= "{% static 'worcspace/css/image/arrow.png' %}"></div>
           <div style="min-height: 20px; padding-bottom: 5px;" class="col-lg-2">{{invoice.for_the_company.company_name}}</div>
-          <div style="min-height: 20px; padding-bottom: 5px; word-break: break-all;" class="col-lg-2"><a href="{{invoice.file_obj.url}}">{{invoice.file_obj | cut:'media/'}}</a></div>
+          <div style="min-height: 20px; padding-bottom: 5px; word-break: break-all;" class="col-lg-2"><a href="{{invoice.file_obj.url}}">{{invoice.file_name}}</a></div>
           <div style="min-height: 20px; padding-bottom: 5px;" class="col-lg-3">{{invoice.description}}</div>
           <div style="min-height: 20px;" class="col-lg-1">
           {% if invoice.paid %}
