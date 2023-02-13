@@ -32,7 +32,7 @@
       <div>{{ message }}</div>
     {% endif %}
   <div class="bluline">
-    <form action="{% url 'new_invoice' company.id  %}" method="post" enctype= "multipart/form-data">
+    <form action="{% url 'sent_company_invoices' company.id  %}" method="post" enctype= "multipart/form-data">
       {% csrf_token %}
       <input type="text" name="for_the_company" placeholder="company" maxlength="256" required id="id_company_name">
       {{form}}
