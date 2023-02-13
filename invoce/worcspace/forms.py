@@ -3,8 +3,9 @@ from django.contrib.auth import get_user_model, authenticate
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
-
+from django.forms import ModelForm
 from .utils import send_email_for_verify
+from .models import Invoice
 
 User = get_user_model()
 
@@ -62,3 +63,84 @@ class MyAuthenticationForm(AuthenticationForm):
                 self.confirm_login_allowed(self.user_cache)
 
         return self.cleaned_data
+
+
+class InvoiceForm(ModelForm):
+    for_the_company = forms.CharField(max_length=256,
+                                      required=True,
+                                      widget=forms.TextInput(attrs={'placeholder': 'company',
+                                                                    'id': 'id_company_name',
+                                                                    'class': 'form-control',
+                                                                    # 'style': 'width: 100%',
+                                                                    }))
+
+    class Meta:
+        model = Invoice
+        fields = ['description', 'file_obj', 'email']
+        labels = {
+            # "description": "",
+            "file_obj": ""
+        }
+        widgets = {
+            'description': forms.TextInput(attrs={'placeholder': 'description',
+                                                  'class': 'form-control',
+                                                  # 'style': 'width: 100%'
+                                                  }),
+            'file_obj': forms.FileInput(attrs={'id': 'inputGroupFile04',
+                                               'class': 'form-control',
+                                               'aria - describedby': "inputGroupFile04",
+                                                'aria - label': "Upload"
+                                               # 'style': 'width: 100%'
+                                               }),
+            'email': forms.EmailInput(attrs={'placeholder': 'Email',
+                                             'class': 'form-control',
+                                             # 'style': 'width: 100%'
+
+                                             }),
+            # 'image': forms.ClearableFileInput(attrs={'multiple': True})
+        }
+
+    field_order = ('for_the_company', 'description', 'file_obj', 'email')
+
+
+class UpdateInvoiceForm(ModelForm):
+    # for_the_company = forms.CharField(max_length=256,
+    #                                   required=True,
+    #                                   widget=forms.TextInput(attrs={'placeholder': 'company',
+    #                                                                 'id': 'id_company_name',
+    #                                                                 'class': 'form-control',
+    #                                                                 # 'style': 'width: 100%',
+    #                                                                 }))
+
+    def __init__(self, *args, **kwargs):
+        super(UpdateInvoiceForm, self).__init__(*args, **kwargs)
+        # Making location required
+        self.fields['file_obj'].required = False
+
+    class Meta:
+        model = Invoice
+        fields = ['description', 'file_obj', 'email']
+        labels = {
+            # "description": "",
+            "file_obj": ""
+        }
+        widgets = {
+            'description': forms.TextInput(attrs={'placeholder': 'description',
+                                                  'class': 'form-control',
+                                                  # 'style': 'width: 100%'
+                                                  }),
+            'file_obj': forms.FileInput(attrs={'id': 'inputGroupFile04',
+                                               'class': 'form-control',
+                                               'aria - describedby': "inputGroupFile04",
+                                                'aria - label': "Upload"
+                                               # 'style': 'width: 100%'
+                                               }),
+            'email': forms.EmailInput(attrs={'placeholder': 'Email',
+                                             'class': 'form-control',
+                                             # 'style': 'width: 100%'
+
+                                             }),
+            # 'image': forms.ClearableFileInput(attrs={'multiple': True})
+        }
+
+    field_order = ('for_the_company', 'description', 'file_obj', 'email')
