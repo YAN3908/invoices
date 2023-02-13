@@ -32,7 +32,7 @@ def send_email_for_verify(request, user):
     email.send()
 
 
-def send_email_invoice(request, company, invoice_email, obj):
+def send_email_invoice(request, company, obj):
     try:
         current_site = get_current_site(request)
         merge_data = {
@@ -44,7 +44,7 @@ def send_email_invoice(request, company, invoice_email, obj):
         message = EmailMultiAlternatives(
            subject=f'invoice {company}',
            body="mail testing",
-           to=[invoice_email]
+           to=[obj.email]
         )
         message.attach_alternative(html_body, "text/html")
         if request.FILES:
@@ -53,11 +53,99 @@ def send_email_invoice(request, company, invoice_email, obj):
             message.attach(uploaded_file.name, uploaded_file.read(), uploaded_file.content_type)
         message.send(fail_silently=False)
         obj.mail_sent = True
-        obj.save()
+        obj.save(update_fields=['mail_sent'])
     except:
         obj.mail_sent = False
-        obj.save()
+        obj.save(update_fields=['mail_sent'])
 
+
+def send_additional_email(request, obj):
+    try:
+        company = obj.company_invoice.company_name
+        current_site = get_current_site(request)
+        merge_data = {
+            'company': company,
+            'domain': current_site.domain
+        }
+        html_body = render_to_string("invoice_email.html", merge_data)
+
+        message = EmailMultiAlternatives(
+            subject=f'invoice {company}',
+            body="mail testing",
+            to=[obj.email]
+        )
+        message.attach_alternative(html_body, "text/html")
+        uploaded_file = obj.file_obj
+        name = str(obj.file_name)
+        message.attach(name, uploaded_file.read())
+        message.send(fail_silently=False)
+        obj.mail_sent = True
+        obj.save(update_fields=['mail_sent'])
+    except:
+        return 'mail not sent'
+
+
+def send_new_email(request, obj):
+    try:
+        company = obj.company_invoice.company_name
+        current_site = get_current_site(request)
+        merge_data = {
+            'company': company,
+            'domain': current_site.domain
+        }
+        html_body = render_to_string("invoice_new_email.html", merge_data)
+
+        message = EmailMultiAlternatives(
+            subject=f'invoice {company}',
+            body="mail testing",
+            to=[obj.email]
+        )
+        message.attach_alternative(html_body, "text/html")
+        uploaded_file = obj.file_obj
+        name = str(obj.file_name)
+        # uploaded_file.seek(0)
+        message.attach(name, uploaded_file.read())
+        message.send(fail_silently=False)
+        obj.mail_sent = True
+        obj.save(update_fields=['mail_sent'])
+    except:
+        return 'mail not sent'
+    # return 'mail not sent'
+
+# FileResponse(document.file_obj)    obj.file_name = request.FILES['file_obj']
+# def send_email_invoice(request, company, obj):
+#     # print(f'qweqweqweqwe{obj.email}')
+#     count = 5
+#     while count > 0:
+#         try:
+#             current_site = get_current_site(request)
+#             merge_data = {
+#                 'company': company,
+#                 'domain': current_site.domain
+#             }
+#             html_body = render_to_string("invoice_email.html", merge_data)
+#
+#             message = EmailMultiAlternatives(
+#                subject=f'invoice {company}',
+#                body="mail testing",
+#                to=[obj.email]
+#             )
+#             message.attach_alternative(html_body, "text/html")
+#             if request.FILES:
+#                 uploaded_file = request.FILES['file_obj']
+#                 uploaded_file.seek(0)
+#                 message.attach(uploaded_file.name, uploaded_file.read(), uploaded_file.content_type)
+#             message.send(fail_silently=False)
+#             obj.mail_sent = True
+#             obj.save()
+#             count = 0
+#             print(count)
+#         except:
+#             count -= 1
+#             print(count)
+#             if count == 0:
+#                 obj.mail_sent = False
+#                 obj.save()
 
 
 def check_company_in_api(reg_and_company):
