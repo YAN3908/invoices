@@ -33,11 +33,31 @@
       <div>{{ message }}</div>
     {% endif %}
   <div class="bluline">
-    <form action="{% url 'new_invoice' company.id  %}" method="post" enctype= "multipart/form-data">
+    <form action="{% url 'sent_company_invoices' company.id  %}" method="post" enctype= "multipart/form-data">
+      {% for error in form.non_field_errors %}
+    {{error}}
+    {% endfor %}
       {% csrf_token %}
-      <input type="text" name="for_the_company" placeholder="company" maxlength="256" required id="id_company_name">
-      {{form}}
-      <input type="submit" value="Send">
+      <input type="hidden" name="path" value="?mons={{request.GET.mons}}&year={{request.GET.year}}&company={{request.GET.company}}">
+<!--      <input type="text" name="for_the_company" placeholder="company" maxlength="256" required id="id_company_name">-->
+    <div class="row">
+
+      <div class="col-lg-4" >
+                {{form.for_the_company}}
+      </div>
+      <div class="col-lg-3">
+                {{form.description}}
+      </div>
+      <div class="col-lg-2">
+                {{form.file_obj}}
+      </div>
+      <div class="col-lg-2">
+                {{form.email}}
+      </div>
+      <div class="col-lg-1">
+            <input type="submit" class="btn btn-primary" value="Send">
+      </div>
+    </div>
     </form>
   </div>
     <div class="container" style="max-width: 1500px;">
@@ -141,9 +161,10 @@
           <div class="row blues" >
             <div style="min-height: 20px; padding-bottom: 5px;" class="col-lg-1">{{invoice.time_send | date:"SHORT_DATE_FORMAT"}}</div>
             <div style="min-height: 20px; padding-bottom: 5px;" class="col-lg-4">{{invoice.for_the_company.company_name}}</div>
-            <div style="min-height: 20px; padding-bottom: 5px; word-break: break-all;" class="col-lg-3"><a href="{{invoice.file_obj.url}}">{{invoice.file_obj | cut:'media/'}}</a></div>
+            <div style="min-height: 20px; padding-bottom: 5px; word-break: break-all;" class="col-lg-3"><a href="{{invoice.file_obj.url}}">{{invoice.file_name}}</a></div>
             <div style="min-height: 20px; padding-bottom: 5px;" class="col-lg-3">{{invoice.description}}</div>
             <div style="min-height: 20px;" class="col-lg-1">
+
             {% if invoice.paid %}
               <div style="display: inline-block; margin: 10px 10px 10px 0px;">
                 <li class="nav-item dropdown" style="list-style-type: none;">
@@ -170,23 +191,58 @@
                   </li>
                 </div>
                 {% else %}
-                <div style="display: inline-block; margin: 10px 0px 10px 0px;">
-                  <li class="nav-item dropdown" style="list-style-type: none;">
-                    <a  data-bs-toggle="dropdown"  role="button" aria-expanded="false">
-                      <img style="height: 29px; object-fit: contain; " class="card-img-top" src= "{% static 'worcspace/css/image/paid.png' %}">
-                    </a>
-                    <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="##">No action</a></li>
-                      <li><input class="btn dropdown-item" type="submit" name="{{invoice.id}}" value="Paid"></li>
-                      <li><input class="btn dropdown-item" type="submit" name="{{invoice.id}}" value="Remainder"></li>
+                  {% if invoice.mail_sent is True %}
+                    <div style="display: inline-block; margin: 10px 0px 10px 0px;">
+                      <li class="nav-item dropdown" style="list-style-type: none;">
+                        <a  data-bs-toggle="dropdown"  role="button" aria-expanded="false">
+                          <img style="height: 29px; object-fit: contain; " class="card-img-top" src= "{% static 'worcspace/css/image/paid.png' %}">
+                        </a>
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="##">No action</a></li>
+                          <li><input class="btn dropdown-item" type="submit" name="{{invoice.id}}" value="Paid"></li>
+                          <li><input class="btn dropdown-item" type="submit" name="{{invoice.id}}" value="Remainder"></li>
 
-                    </ul>
-                  </li>
-                </div>
+                        </ul>
+                      </li>
+                    </div>
+                  {% else %}
+                    {% if invoice.mail_sent is False %}
+                      <div style="display: inline-block; margin: 10px 0px 10px 0px;">
+                        <li class="nav-item dropdown" style="list-style-type: none;">
+                          <a  data-bs-toggle="dropdown"  role="button" aria-expanded="false">
+                            <img style="height: 29px; object-fit: contain; " class="card-img-top" src= "{% static 'worcspace/css/image/Nt1i (1).gif' %}">
+                          </a>
+                          <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="##">No action</a></li>
+                            <li><input class="btn dropdown-item" type="submit" name="{{invoice.id}}" value="Paid"></li>
+                            <li><input class="btn dropdown-item" type="submit" name="{{invoice.id}}" value="Remainder"></li>
+
+                          </ul>
+                        </li>
+                      </div>
+                    {% else %}
+                      <div style="display: inline-block; margin: 10px 0px 10px 0px;">
+                        <li class="nav-item dropdown" style="list-style-type: none;">
+                          <a  data-bs-toggle="dropdown"  role="button" aria-expanded="false">
+                            <img style="height: 29px; object-fit: contain; " class="card-img-top" src= "{% static 'worcspace/css/image/mail_send.gif' %}">
+                          </a>
+                          <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="##">No action</a></li>
+                            <li><input class="btn dropdown-item" type="submit" name="{{invoice.id}}" value="Paid"></li>
+                            <li><input class="btn dropdown-item" type="submit" name="{{invoice.id}}" value="Remainder"></li>
+
+                          </ul>
+                        </li>
+                      </div>
+
+                    {% endif %}
+                  {% endif %}
                 {% endif %}
               {% endif %}
                 <div style="display: inline-block">
-                  <img style="height: 25px; object-fit: contain;" class="card-img-top" src= "{% static 'worcspace/css/image/edit.png' %}">
+                  <a href="{% url 'invoice_redactor' invoice.id  %}">
+                    <img style="height: 25px; object-fit: contain;" class="card-img-top" src= "{% static 'worcspace/css/image/edit.png' %}">
+                  </a>
                 </div>
 
           </div>
