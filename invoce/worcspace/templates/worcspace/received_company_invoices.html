@@ -33,10 +33,30 @@
     {% endif %}
   <div class="bluline">
     <form action="{% url 'sent_company_invoices' company.id  %}" method="post" enctype= "multipart/form-data">
+      {% for error in form.non_field_errors %}
+    {{error}}
+    {% endfor %}
       {% csrf_token %}
-      <input type="text" name="for_the_company" placeholder="company" maxlength="256" required id="id_company_name">
-      {{form}}
-      <input type="submit" value="Send">
+      <input type="hidden" name="path" value="?mons={{request.GET.mons}}&year={{request.GET.year}}&company={{request.GET.company}}">
+<!--      <input type="text" name="for_the_company" placeholder="company" maxlength="256" required id="id_company_name">-->
+    <div class="row">
+
+      <div class="col-lg-4" >
+                {{form.for_the_company}}
+      </div>
+      <div class="col-lg-3">
+                {{form.description}}
+      </div>
+      <div class="col-lg-2">
+                {{form.file_obj}}
+      </div>
+      <div class="col-lg-2">
+                {{form.email}}
+      </div>
+      <div class="col-lg-1">
+            <input type="submit" class="btn btn-primary" value="Send">
+      </div>
+    </div>
     </form>
   </div>
     <div class="container" style="max-width: 1500px;">
