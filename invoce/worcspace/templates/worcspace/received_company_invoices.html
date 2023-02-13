@@ -162,7 +162,7 @@
             <div style="min-height: 20px; padding-bottom: 5px;" class="col-lg-1">{{invoice.time_send | date:"SHORT_DATE_FORMAT"}}</div>
             <div style="min-height: 20px; padding-bottom: 5px;" class="col-lg-3">{{invoice.company_invoice.company_name}}</div>
             <div style="min-height: 20px; padding-bottom: 5px;" class="col-lg-2">{{invoice.company_invoice.regcode}}</div>
-            <div style="min-height: 20px; padding-bottom: 5px; word-break: break-all;" class="col-lg-2"><a href="{{invoice.file_obj.url}}">{{invoice.file_obj | cut:'media/'}}</a></div>
+            <div style="min-height: 20px; padding-bottom: 5px; word-break: break-all;" class="col-lg-2"><a href="{{invoice.file_obj.url}}">{{invoice.file_name}}</a></div>
             <div style="min-height: 20px; padding-bottom: 5px;" class="col-lg-3">{{invoice.description}}</div>
             <div style="min-height: 20px;" class="col-lg-1">
             {% if invoice.paid %}
