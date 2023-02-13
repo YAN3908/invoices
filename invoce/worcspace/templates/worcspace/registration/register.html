@@ -12,8 +12,13 @@
         <p style="color: red;">{{ field.errors.as_text }}</p>
         {{field.label_tag}}
         <div class="form-group">{{field}}</div>
-
         {% endfor %}
+        <input class="btn btn-primary" type="submit" value="Register">
+    </form>
+</div>
+    Already have an account? <a href="{% url 'login' %}">Log In here.</a>
+
+{% endblock %}
 
 <!--        <div class="form-group">-->
 <!--            <input class="form-control" autofocus type="text" name="username" placeholder="Username">-->
@@ -30,9 +35,3 @@
 <!--        <div class="form-group">-->
 <!--            <input class="form-control" type="password" name="confirmation" placeholder="Confirm Password">-->
 <!--        </div>-->
-        <input class="btn btn-primary" type="submit" value="Register">
-    </form>
-</div>
-    Already have an account? <a href="{% url 'login' %}">Log In here.</a>
-
-{% endblock %}
